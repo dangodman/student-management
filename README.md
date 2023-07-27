@@ -1,4 +1,4 @@
-# books-vue
+学生学籍管理系统
 
 ## Project setup
 ```
