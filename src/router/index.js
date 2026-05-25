@@ -57,12 +57,39 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  // 设置页面标题
   if (to.meta.title) {
     document.title = to.meta.title;
   }
+
+  // 登录页直接放行
   if (to.path === "/login") {
+    // 已登录用户访问登录页时，重定向到对应首页
+    const token = sessionStorage.getItem("token");
+    const role = sessionStorage.getItem("role");
+    if (token && role) {
+      return next(role === "admin" ? "/admin" : "/student");
+    }
     return next();
   }
-  return next();
+
+  // 其他页面需要验证登录状态
+  const token = sessionStorage.getItem("token");
+  const role = sessionStorage.getItem("role");
+
+  if (!token) {
+    return next("/login");
+  }
+
+  // 验证角色权限：学生不能访问管理员页面，反之亦然
+  if (to.path.startsWith("/admin") && role !== "admin") {
+    return next("/student");
+  }
+  if (to.path.startsWith("/student") && role !== "student") {
+    return next("/admin");
+  }
+
+  next();
 });
-export default router;``
+
+export default router;

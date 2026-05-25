@@ -51,6 +51,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        sessionStorage.clear()
         this.$message({
           type: 'success',
           message: '您已经退出登录！'
